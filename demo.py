@@ -3,14 +3,14 @@ from pandas import Series
 import numpy as np
 from statsmodels.tsa.arima_model import ARIMA
 # load dataset
-series = Series.from_csv('data/daily-minimum-temperatures.csv', header=0)
-
-# split the dataset
-split_point = len(series) - 7
-dataset, validation = series[0:split_point], series[split_point:]
-print ('Dataset %d, Validation %d' % (len(dataset), len(validation)))
-dataset.to_csv('dataset.csv')
-validation.to_csv('validation.csv')
+# series = Series.from_csv('data/daily-minimum-temperatures.csv', header=0)
+#
+# # split the dataset
+# split_point = len(series) - 7
+# dataset, validation = series[0:split_point], series[split_point:]
+# print ('Dataset %d, Validation %d' % (len(dataset), len(validation)))
+# dataset.to_csv('dataset.csv')
+# validation.to_csv('validation.csv')
 
 # create differenced series
 def difference(dataset, interval=1):
@@ -21,8 +21,8 @@ def difference(dataset, interval=1):
     return np.array(diff)
 
 # invert differenced value
-def inverve_difference(history, yhat, interval=1):
-    return yhat + history[-history]
+def inverse_difference(history, yhat, interval=1):
+	return yhat + history[-interval]
 
 # load dataset for ARIMA model
 series = Series.from_csv('dataset.csv', header=None)
@@ -35,4 +35,7 @@ model = ARIMA(differenced, order=(7,0,1))
 model_fit = model.fit(disp=0)
 # print summary of fit model
 print (model_fit.summary())
-
+forcast = model_fit.forecast()[0]
+# invert the differenced value to something usable
+forecast = inverse_difference(X, forcast, days_in_year)
+print('Forecast: %f' % forecast)
