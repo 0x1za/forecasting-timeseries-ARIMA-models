@@ -35,7 +35,16 @@ model = ARIMA(differenced, order=(7,0,1))
 model_fit = model.fit(disp=0)
 # print summary of fit model
 print (model_fit.summary())
-forcast = model_fit.forecast()[0]
+forcast = model_fit.forecast(steps=7)[0]
 # invert the differenced value to something usable
-forecast = inverse_difference(X, forcast, days_in_year)
-print('Forecast: %f' % forecast)
+history = [x for x in X]
+day = 1
+for yhat in forcast:
+    inverted = inverse_difference(history, yhat, days_in_year)
+    print('Day %d: %f' % (day, inverted))
+    day += 1
+
+
+
+
+
