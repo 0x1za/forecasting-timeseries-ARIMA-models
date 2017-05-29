@@ -13,18 +13,26 @@ dataset.to_csv('dataset.csv')
 validation.to_csv('validation.csv')
 
 # create differenced series
-def differenced(dataset, interval=1):
+def difference(dataset, interval=1):
     diff = list()
     for i in range(interval, len(dataset)):
         value = dataset[i] - dataset[i - interval]
         diff.append(value)
     return np.array(diff)
 
-# load dataset for ARIMA model
-series = Series.from_csv('dataset.csv', header=None)
-# seasonal difference
-
 # invert differenced value
 def inverve_difference(history, yhat, interval=1):
     return yhat + history[-history]
+
+# load dataset for ARIMA model
+series = Series.from_csv('dataset.csv', header=None)
+# seasonal difference
+X = series.values
+days_in_year = 365
+differenced = difference(X, days_in_year)
+# fit model
+model = ARIMA(differenced, order=(7,0,1))
+model_fit = model.fit(disp=0)
+# print summary of fit model
+print (model_fit.summary())
 
