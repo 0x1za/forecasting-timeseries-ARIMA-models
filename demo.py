@@ -3,14 +3,14 @@ from pandas import Series
 import numpy as np
 from statsmodels.tsa.arima_model import ARIMA
 # load dataset
-# series = Series.from_csv('data/daily-minimum-temperatures.csv', header=0)
-#
-# # split the dataset
-# split_point = len(series) - 7
-# dataset, validation = series[0:split_point], series[split_point:]
-# print ('Dataset %d, Validation %d' % (len(dataset), len(validation)))
-# dataset.to_csv('dataset.csv')
-# validation.to_csv('validation.csv')
+series = Series.from_csv('data/daily-minimum-temperatures.csv', header=0)
+
+# split the dataset
+split_point = len(series) - 7
+dataset, validation = series[0:split_point], series[split_point:]
+print ('Dataset %d, Validation %d' % (len(dataset), len(validation)))
+dataset.to_csv('dataset.csv')
+validation.to_csv('validation.csv')
 
 # create differenced series
 def difference(dataset, interval=1):

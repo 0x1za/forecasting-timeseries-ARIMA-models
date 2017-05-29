@@ -1,4 +1,5 @@
 from pandas import Series
+from pandas import read_csv
 from statsmodels.tsa.arima_model import ARIMA
 import numpy
 
@@ -20,6 +21,7 @@ series = Series.from_csv('dataset.csv', header=None)
 X = series.values
 days_in_year = 365
 differenced = difference(X, days_in_year)
+
 # fit model
 model = ARIMA(differenced, order=(7,0,1))
 model_fit = model.fit(disp=0)
@@ -28,8 +30,13 @@ forecast = model_fit.forecast(steps=7)[0]
 # invert the differenced forecast to something usable
 history = [x for x in X]
 day = 1
+i = 0
+validation = read_csv('validation.csv', header=None)
+
 for yhat in forecast:
-	inverted = inverse_difference(history, yhat, days_in_year)
-	print('Day %d: %f' % (day, inverted))
-	history.append(inverted)
-	day += 1
+	while i in range(len(validation)):
+		inverted = inverse_difference(history, yhat, days_in_year)
+		print('Day %d Predicted: %s      Actual: %s' % (day, inverted, validation[1][i]))
+		history.append(inverted)
+		day += 1
+		i += 1
